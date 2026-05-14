@@ -15,9 +15,24 @@ import {
 } from "../components/ui/popover";
 import { Save, Download, Trash2, Upload, ChevronUp, ChevronDown } from "lucide-react";
 
+// Compact glyph literal: each row is a 4-char string of "1" / "0".
+const g = (...rows) => rows.map((r) => r.split("").map((c) => c === "1"));
+
+const DEFAULT_FONT_DATA = {
+  H: g("1001", "1001", "1111", "1001", "1001", "1001"),
+  E: g("1111", "1000", "1110", "1000", "1000", "1111"),
+  L: g("1000", "1000", "1000", "1000", "1000", "1111"),
+  O: g("0110", "1001", "1001", "1001", "1001", "0110"),
+  W: g("1001", "1001", "1001", "1001", "1111", "0110"),
+  R: g("1110", "1001", "1110", "1100", "1010", "1001"),
+  D: g("1110", "1001", "1001", "1001", "1001", "1110"),
+  P: g("1110", "1001", "1001", "1110", "1000", "1000"),
+  "!": g("0100", "0100", "0100", "0100", "0000", "0100"),
+  " ": g("0000", "0000", "0000", "0000", "0000", "0000"),
+};
+
 const HexagonFontDesigner = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-:;()/ ".split("");
-  const DEFAULT_FONT_HASH = "UDoxMTExMDExMDExMTAxMDAxMDA7QTowMDEwMTEwMTExMDExMTExMDE7SDoxMDExMDEwMTExMDExMDExMDE7RToxMTExMDAxMTAxMDAxMDAxMTE7TDoxMDAxMDAxMDAxMDAxMDAxMTE7TzowMTExMDExMDExMDExMDExMTA7VzoxMDExMDExMDExMDExMTExMDE7UjoxMTExMDExMTExMTAxMDExMDE7RDoxMTExMDExMDExMDExMDExMTA7IDowMDAwMDAwMDAwMDAwMDAwMDA=";
   const DEFAULT_FIRST_CHAR = "P";
   const DEFAULT_MESSAGE = "HELLO WORLD!";
 
@@ -32,13 +47,7 @@ const HexagonFontDesigner = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(null);
-  const [fontData, setFontData] = useState(() => {
-    try {
-      loadFontFromHash(DEFAULT_FONT_HASH);
-    } catch {
-      return {};
-    }
-  });
+  const [fontData, setFontData] = useState(DEFAULT_FONT_DATA);
   const [isGridViewCollapsed, setIsGridViewCollapsed] = useState(false);
   const [gridViewScale, setGridViewScale] = useState(0.5);
 
@@ -121,36 +130,36 @@ const HexagonFontDesigner = () => {
     return binaryStrings.join(',');
   };
   
-  const loadFontFromHash = (hash) => {
+  const parseFontHash = (hash) => {
     try {
-      const letterDefs = hash.split(',');
       const newFontData = {};
-  
-      letterDefs.forEach((def) => {
+      hash.split(",").forEach((def) => {
         const letter = def[0];
         const value = parseInt(def.slice(1), 36);
-        
-        if (letter && !isNaN(value)) {
-          const gridData = Array(6)
-            .fill()
-            .map(() => Array(4).fill(false));
-            
-          // Extract bits back into grid
-          for (let i = 0; i < 24; i++) {
-            const row = Math.floor(i / 3);
-            const col = i % 4;
-            gridData[row][col] = ((value >> i) & 1) === 1;
-          }
-          newFontData[letter] = gridData;
+        if (!letter || isNaN(value)) return;
+
+        const gridData = Array(6)
+          .fill()
+          .map(() => Array(4).fill(false));
+        // Inverse of getFontHash: index = row * 4 + col
+        for (let i = 0; i < 24; i++) {
+          const row = Math.floor(i / 4);
+          const col = i % 4;
+          gridData[row][col] = ((value >> i) & 1) === 1;
         }
+        newFontData[letter] = gridData;
       });
-  
-      setFontData(newFontData);
-      return true;
+      return newFontData;
     } catch (error) {
       console.error("Invalid font hash:", error);
-      return false;
+      return null;
     }
+  };
+
+  const loadFontFromHash = (hash) => {
+    const parsed = parseFontHash(hash);
+    if (parsed) setFontData(parsed);
+    return parsed !== null;
   };
   const svgWidth = horizontalSpacing * 4 + hexWidth / 2;
   const svgHeight = verticalSpacing * 6 + hexHeight / 4;

@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` — production build to `dist/`
 - `npm run lint` — ESLint over the whole tree (`eslint .`)
 - `npm run preview` — preview the production build locally
-- `npm run deploy` — runs `predeploy` (build) then publishes `dist/` to GitHub Pages via `gh-pages`
+
+Deploys happen via `.github/workflows/deploy-web.yml` on push to `main` (or manual dispatch). No local `deploy` script — Actions is the only path.
 
 There is no test runner configured.
 
@@ -32,4 +33,4 @@ Key concepts inside `HexagonFontDesigner.jsx`:
 
 ## Deployment
 
-The site deploys to GitHub Pages at `https://philipmathieu.github.io/hexagon-font` via `npm run deploy`. `vite.config.js` sets `base: '/hexagon-font/'` to match the repo path — if the repo is renamed or forked, update `base` and the `homepage` field in `package.json` together, otherwise asset URLs will 404 in production.
+The site deploys to GitHub Pages at `https://philipmathieu.github.io/hexled` from `.github/workflows/deploy-web.yml` (build on Actions, publish via `actions/deploy-pages`). No `gh-pages` branch — Pages source must be set to "GitHub Actions" in repo settings. `vite.config.js` sets `base: '/hexled/'` to match the repo path — if the repo is renamed or forked, update `base` and the `homepage` field in `package.json` together, otherwise asset URLs will 404 in production.

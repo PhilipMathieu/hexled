@@ -1,16 +1,14 @@
 {
-  "name": "hexagon-font",
+  "name": "hexled-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://philipmathieu.github.io/hexagon-font",
+  "homepage": "https://philipmathieu.github.io/hexled",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.4",

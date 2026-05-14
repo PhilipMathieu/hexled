@@ -4,7 +4,7 @@ The browser-side companion to HexLed. One Vite single-page app, **two
 panels** that share a hex grid component and the font format from
 [`../shared/font_format.md`](../shared/font_format.md):
 
-1. **Font designer** *(existing)* — `src/components/HexagonFontDesigner.jsx`. Lets you draw glyphs on a small hex grid, encodes them to a URL hash for sharing, and is what currently ships as a standalone GitHub Pages site at <https://philipmathieu.github.io/hexagon-font>.
+1. **Font designer** *(existing)* — `src/components/HexagonFontDesigner.jsx`. Lets you draw glyphs on a small hex grid, encodes them to a URL hash for sharing, and ships as a GitHub Pages site at <https://philipmathieu.github.io/hexled>.
 2. **Simulator** *(planned)* — a 24×6 hex canvas that mirrors the physical display. Streams frames to a real device over MQTT-over-WebSocket, and renders glyphs from the designer on the simulated grid as a sanity check before exporting a font.
 
 Both panels live in the **same Vite app** rather than two separate ones, so they can share the hex rendering primitives (`getHexagonPoints`, the `HexagonGrid` component) and the font format loader.
@@ -23,7 +23,12 @@ Other scripts (defined in `package.json`):
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run lint` | ESLint over the whole tree |
-| `npm run deploy` | Builds and publishes to GitHub Pages (the standalone font designer URL) |
+
+## Deployment
+
+`.github/workflows/deploy-web.yml` builds and deploys `web/dist/` to GitHub Pages on every push to `main` that touches `web/**`. You can also trigger it manually from the Actions tab. The site serves from `https://philipmathieu.github.io/hexled/`.
+
+The workflow uses GitHub's first-party Pages actions (`configure-pages`, `upload-pages-artifact`, `deploy-pages`) — no `gh-pages` branch involved. Repo Settings → Pages must have the source set to **GitHub Actions** (the workflow's `configure-pages` step enables Pages on the repo automatically on first run, but the source selector still has to be flipped from "Deploy from a branch" if it's set there).
 
 ## Simulator plan (sketch)
 
@@ -51,6 +56,6 @@ web/src/
 
 ## Path note
 
-`vite.config.js` currently sets `base: '/hexagon-font/'` for the existing GitHub Pages deployment. Don't change that unless we also rename the deployed site — assets will 404 otherwise. The monorepo move doesn't affect the deployment.
+`vite.config.js` sets `base: '/hexled/'` to match the GitHub Pages URL (`https://philipmathieu.github.io/hexled/`). Keep `base`, `homepage` in `package.json`, and the repo name in sync if any of them ever changes — otherwise assets 404 in production.
 
 See [`CLAUDE.md`](CLAUDE.md) for the existing architecture / conventions inside the Vite app (carried over from the standalone repo).
