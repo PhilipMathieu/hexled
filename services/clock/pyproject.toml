@@ -1,0 +1,31 @@
+[project]
+name = "hexled-clock"
+version = "0.0.0"
+description = "Publishes the current time to a HexLed display over MQTT"
+requires-python = ">=3.11"
+dependencies = [
+    "paho-mqtt>=2.1",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.5",
+]
+
+[project.scripts]
+hexled-clock = "clock:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/clock"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "D"]
+ignore = ["D100", "D104", "D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

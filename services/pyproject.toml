@@ -1,0 +1,6 @@
+# This directory aggregates HexLed content publisher services.
+#
+# Workspace membership is declared at the repo root (`/pyproject.toml`)
+# via the `["firmware", "services/*"]` member list. Each service lives in
+# `services/<name>/` and has its own `pyproject.toml`. This file exists as
+# a placeholder so the directory is self-describing — it is not a package.

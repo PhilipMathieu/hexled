@@ -1,0 +1,61 @@
+# This pyproject.toml is for *off-device* development only:
+#   - running pytest under CPython for pure-Python modules like hexmap
+#   - ruff lint/format
+#   - pyright type-checking
+#
+# The firmware itself runs on MicroPython 1.23+ on a Raspberry Pi Pico W and
+# is deployed with `mpremote` — uv / pip have no role on-device. Keep code
+# in `src/` to the intersection of CPython and MicroPython where possible;
+# isolate hardware-touching code behind imports so tests can stub it out.
+
+[project]
+name = "hexled-firmware"
+version = "0.0.0"
+description = "HexLed Display firmware (MicroPython, Raspberry Pi Pico W)"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "pyright>=1.1.380",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",   # pycodestyle / pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "UP",            # pyupgrade
+    "D",             # pydocstyle
+]
+ignore = [
+    "D100",  # missing docstring in public module — keep optional
+    "D104",  # missing docstring in public package
+    "D203",  # 1 blank line before class docstring (conflicts with D211)
+    "D213",  # multi-line summary on 2nd line (conflicts with D212)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"

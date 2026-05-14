@@ -1,0 +1,14 @@
+# Root pyproject.toml — uv workspace declaration only. There is no top-level
+# Python package here; each workspace member has its own pyproject.toml.
+#
+# Workspace members:
+#   - firmware: off-device test / lint config for the MicroPython code.
+#                MicroPython itself is *not* managed through uv.
+#   - services/*: long-running Python content publishers (clock, weather, …)
+#                 that push to MQTT.
+#
+# Common quality tooling (ruff, pyright, pytest) is configured per-member so
+# each workspace can be built or shipped independently.
+
+[tool.uv.workspace]
+members = ["firmware", "services/*"]
